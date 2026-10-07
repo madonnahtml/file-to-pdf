@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; script-src 'self' blob: 'unsafe-eval' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self' blob: data:">
+  <title>Immagini in PDF</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand">
+        <img src="assets/icon.png" alt="" class="brand-logo">
+        <div class="brand-text">
+          <strong>Immagini in PDF</strong>
+          <span id="docSummary">Nessuna immagine</span>
+        </div>
+      </div>
+
+      <div class="topbar-center">
+        <button class="btn" id="btnAdd" title="Aggiungi immagini (Ctrl+O)">
+          <i data-icon="plus"></i><span>Aggiungi immagini</span>
+        </button>
+        <div class="btn-group">
+          <button class="btn icon" id="btnUndo" title="Annulla (Ctrl+Z)"><i data-icon="undo"></i></button>
+          <button class="btn icon" id="btnRedo" title="Ripeti (Ctrl+Y)"><i data-icon="redo"></i></button>
+        </div>
+        <button class="btn ghost" id="btnClear" title="Svuota tutto"><i data-icon="trash"></i><span>Svuota</span></button>
+      </div>
+
+      <div class="topbar-right">
+        <button class="btn icon ghost" id="btnTheme" title="Tema"><i data-icon="sun"></i></button>
+        <button class="btn primary" id="btnExport" title="Crea PDF (Ctrl+S)">
+          <i data-icon="file"></i><span>Crea PDF</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Pages sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="panel-title">
+        <span>Pagine</span>
+        <span class="badge" id="pageCount">0</span>
+      </div>
+      <div class="page-list" id="pageList"></div>
+      <button class="btn dashed" id="btnBlankPage"><i data-icon="plus"></i><span>Pagina vuota</span></button>
+    </aside>
+
+    <!-- Editor -->
+    <main class="stage" id="stage">
+      <div class="stage-toolbar" id="itemToolbar">
+        <div class="tb-section" id="tbItem">
+          <button class="btn sm" data-act="crop" title="Ritaglia (C)"><i data-icon="crop"></i><span>Ritaglia</span></button>
+          <button class="btn sm icon" data-act="rotL" title="Ruota a sinistra (Shift+R)"><i data-icon="rotL"></i></button>
+          <button class="btn sm icon" data-act="rotR" title="Ruota a destra (R)"><i data-icon="rotR"></i></button>
+          <span class="tb-sep"></span>
+          <button class="btn sm icon" data-act="fit" title="Adatta alla pagina"><i data-icon="maximize"></i></button>
+          <button class="btn sm icon" data-act="center" title="Centra"><i data-icon="center"></i></button>
+          <button class="btn sm icon" data-act="front" title="Porta in primo piano"><i data-icon="front"></i></button>
+          <button class="btn sm icon" data-act="back" title="Porta in fondo"><i data-icon="back"></i></button>
+          <span class="tb-sep"></span>
+          <button class="btn sm icon" data-act="prevPage" title="Sposta alla pagina precedente"><i data-icon="arrowUp"></i></button>
+          <button class="btn sm icon" data-act="nextPage" title="Sposta alla pagina successiva"><i data-icon="arrowDown"></i></button>
+          <button class="btn sm icon" data-act="ownPage" title="Sposta su una pagina nuova"><i data-icon="split"></i></button>
+          <button class="btn sm icon" data-act="duplicate" title="Duplica"><i data-icon="copy"></i></button>
+          <span class="tb-sep"></span>
+          <button class="btn sm icon danger" data-act="delete" title="Elimina immagine (Canc)"><i data-icon="trash"></i></button>
+        </div>
+        <div class="tb-hint" id="tbHint">Clicca un'immagine per modificarla · trascinala per spostarla · usa gli angoli per ridimensionarla</div>
+        <div class="zoom">
+          <button class="btn sm icon ghost" id="zoomOut" title="Riduci"><i data-icon="minus"></i></button>
+          <button class="btn sm ghost zoom-label" id="zoomFit" title="Adatta allo schermo">100%</button>
+          <button class="btn sm icon ghost" id="zoomIn" title="Ingrandisci"><i data-icon="plus"></i></button>
+        </div>
+      </div>
+
+      <div class="canvas-scroll" id="canvasScroll">
+        <div class="canvas-inner" id="canvasInner">
+          <div class="page" id="pageEl">
+            <div class="margin-guide" id="marginGuide"></div>
+            <div class="snap-line v" id="snapV"></div>
+            <div class="snap-line h" id="snapH"></div>
+            <div class="sel-box" id="selBox">
+              <span class="handle nw" data-handle="nw"></span><span class="handle ne" data-handle="ne"></span>
+              <span class="handle sw" data-handle="sw"></span><span class="handle se" data-handle="se"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty" id="emptyState">
+        <div class="empty-card">
+          <div class="empty-icon"><i data-icon="images"></i></div>
+          <h1>Trasforma le tue immagini in un PDF</h1>
+          <p>Trascina qui le immagini oppure scegli i file dal computer.<br>Ogni immagine diventa una pagina, nell'ordine in cui la aggiungi.</p>
+          <button class="btn primary lg" id="btnAddEmpty"><i data-icon="plus"></i><span>Scegli immagini</span></button>
+          <div class="formats">
+            <span>JPG</span><span>PNG</span><span>HEIC</span><span>WEBP</span><span>GIF</span><span>BMP</span><span>TIFF</span><span>SVG</span><span>AVIF</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="drop-overlay" id="dropOverlay">
+        <div class="drop-card">
+          <i data-icon="upload"></i>
+          <strong id="dropText">Rilascia per aggiungere</strong>
+        </div>
+      </div>
+    </main>
+
+    <!-- Settings -->
+    <aside class="inspector" id="inspector">
+      <section class="card">
+        <h3><i data-icon="file"></i>Documento</h3>
+
+        <label class="field">
+          <span>Formato pagina</span>
+          <select id="setPageSize">
+            <option value="A4">A4 (210 × 297 mm)</option>
+            <option value="A3">A3 (297 × 420 mm)</option>
+            <option value="A5">A5 (148 × 210 mm)</option>
+            <option value="Letter">Letter (8.5 × 11 in)</option>
+            <option value="Legal">Legal (8.5 × 14 in)</option>
+            <option value="fit">Adatta all'immagine</option>
+          </select>
+        </label>
+
+        <div class="field">
+          <span>Margini <em id="marginVal">10 mm</em></span>
+          <input type="range" id="setMargin" min="0" max="40" step="1" value="10">
+        </div>
+
+        <div class="field">
+          <span>Spazio tra immagini <em id="gapVal">6 mm</em></span>
+          <input type="range" id="setGap" min="0" max="30" step="1" value="6">
+        </div>
+
+        <div class="field">
+          <span>Sfondo pagina</span>
+          <div class="swatches" id="bgSwatches">
+            <button data-bg="#ffffff" style="--c:#ffffff" title="Bianco"></button>
+            <button data-bg="#f5f1e8" style="--c:#f5f1e8" title="Carta"></button>
+            <button data-bg="#eef1f6" style="--c:#eef1f6" title="Grigio chiaro"></button>
+            <button data-bg="#1f2128" style="--c:#1f2128" title="Antracite"></button>
+            <button data-bg="#000000" style="--c:#000000" title="Nero"></button>
+            <label class="swatch-custom" title="Colore personalizzato">
+              <input type="color" id="setBg" value="#ffffff">
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span>Qualità e dimensione file</span>
+          <div class="segmented" id="setQuality">
+            <button data-v="max">Massima</button>
+            <button data-v="high">Alta</button>
+            <button data-v="medium">Media</button>
+            <button data-v="low">Leggera</button>
+          </div>
+          <small class="hint" id="qualityHint"></small>
+        </div>
+      </section>
+
+      <section class="card" id="pageCard">
+        <h3><i data-icon="layout"></i>Pagina <span id="pageCardNum"></span></h3>
+
+        <div class="field">
+          <span>Orientamento</span>
+          <div class="segmented" id="setOrientation">
+            <button data-v="auto">Auto</button>
+            <button data-v="portrait">Verticale</button>
+            <button data-v="landscape">Orizzontale</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span>Disposizione immagini</span>
+          <div class="layouts" id="setLayout">
+            <button data-v="grid" title="Griglia automatica"><i data-icon="lGrid"></i><span>Griglia</span></button>
+            <button data-v="column" title="Una sotto l'altra"><i data-icon="lCol"></i><span>Colonna</span></button>
+            <button data-v="row" title="Una accanto all'altra"><i data-icon="lRow"></i><span>Riga</span></button>
+            <button data-v="free" title="Posizione libera"><i data-icon="move"></i><span>Libera</span></button>
+          </div>
+          <small class="hint">Sposta o ridimensiona un'immagine per passare alla disposizione libera.</small>
+        </div>
+
+        <button class="btn block" id="btnAddToPage"><i data-icon="imagePlus"></i><span>Aggiungi immagini alla pagina</span></button>
+        <div class="row-btns">
+          <button class="btn block ghost" id="btnMergePrev" title="Porta le immagini di questa pagina nella pagina precedente"><i data-icon="merge"></i><span>Unisci alla precedente</span></button>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- Crop dialog -->
+  <div class="modal" id="cropModal" hidden>
+    <div class="modal-card crop-card">
+      <header class="modal-head">
+        <h2><i data-icon="crop"></i>Ritaglia immagine</h2>
+        <button class="btn icon ghost" id="cropClose" title="Chiudi"><i data-icon="x"></i></button>
+      </header>
+      <div class="crop-body">
+        <div class="crop-stage" id="cropStage">
+          <div class="crop-wrap" id="cropWrap">
+            <img id="cropImg" alt="">
+            <div class="crop-box" id="cropBox">
+              <div class="crop-grid"></div>
+              <span class="h nw" data-h="nw"></span><span class="h n" data-h="n"></span><span class="h ne" data-h="ne"></span>
+              <span class="h e" data-h="e"></span><span class="h se" data-h="se"></span><span class="h s" data-h="s"></span>
+              <span class="h sw" data-h="sw"></span><span class="h w" data-h="w"></span>
+            </div>
+          </div>
+        </div>
+        <div class="crop-side">
+          <div class="field">
+            <span>Proporzioni</span>
+            <div class="chips" id="cropRatios">
+              <button data-r="free">Libero</button>
+              <button data-r="orig">Originale</button>
+              <button data-r="1">1:1</button>
+              <button data-r="1.3333">4:3</button>
+              <button data-r="0.75">3:4</button>
+              <button data-r="1.7778">16:9</button>
+              <button data-r="0.5625">9:16</button>
+              <button data-r="0.7071">A4 vert.</button>
+              <button data-r="1.4142">A4 oriz.</button>
+            </div>
+          </div>
+          <div class="field">
+            <span>Rotazione</span>
+            <div class="row-btns">
+              <button class="btn" id="cropRotL"><i data-icon="rotL"></i><span>Sinistra</span></button>
+              <button class="btn" id="cropRotR"><i data-icon="rotR"></i><span>Destra</span></button>
+            </div>
+          </div>
+          <div class="crop-info" id="cropInfo"></div>
+          <div class="spacer"></div>
+          <button class="btn ghost block" id="cropReset"><i data-icon="reset"></i><span>Ripristina</span></button>
+          <div class="row-btns">
+            <button class="btn block" id="cropCancel">Annulla</button>
+            <button class="btn primary block" id="cropApply"><i data-icon="check"></i><span>Applica</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export progress -->
+  <div class="modal" id="progressModal" hidden>
+    <div class="modal-card progress-card">
+      <div class="spinner"></div>
+      <h2 id="progressTitle">Creazione del PDF…</h2>
+      <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+      <p id="progressText"></p>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <input type="file" id="fileInput" multiple hidden
+         accept="image/*,.heic,.heif,.tif,.tiff,.svg,.bmp,.webp,.avif,.gif,.jpg,.jpeg,.png,.jfif,.ico">
+
+  <script src="../../node_modules/pdf-lib/dist/pdf-lib.min.js"></script>
+  <script src="../../node_modules/pako/dist/pako.min.js"></script>
+  <script src="../../node_modules/utif/UTIF.js"></script>
+  <script src="../../node_modules/heic2any/dist/heic2any.min.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/decode.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/crop.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

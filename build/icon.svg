@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5b5bf0"/>
+      <stop offset="1" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c7d2fe"/>
+      <stop offset="1" stop-color="#e9d5ff"/>
+    </linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#1e1b4b" flood-opacity=".35"/>
+    </filter>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#bg)"/>
+  <!-- back photo -->
+  <g transform="rotate(-10 256 256)" filter="url(#sh)">
+    <rect x="128" y="104" width="232" height="290" rx="20" fill="#ffffff" opacity=".55"/>
+  </g>
+  <!-- document -->
+  <g filter="url(#sh)">
+    <path d="M160 92h150l66 66v248a22 22 0 0 1-22 22H160a22 22 0 0 1-22-22V114a22 22 0 0 1 22-22z" fill="#ffffff"/>
+    <path d="M310 92v44a22 22 0 0 0 22 22h44z" fill="#ddd6fe"/>
+  </g>
+  <!-- photo inside -->
+  <rect x="170" y="176" width="172" height="132" rx="14" fill="url(#sky)"/>
+  <circle cx="300" cy="212" r="17" fill="#fbbf24"/>
+  <path d="M170 284l50-54 40 42 26-26 56 56v6a14 14 0 0 1-14 14H184a14 14 0 0 1-14-14z" fill="#6366f1"/>
+  <path d="M236 308l50-62 56 62z" fill="#8b5cf6"/>
+  <!-- PDF label -->
+  <rect x="170" y="330" width="88" height="40" rx="10" fill="#5b5bf0"/>
+  <text x="214" y="358" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="25" font-weight="800" fill="#fff" letter-spacing="1">PDF</text>
+  <rect x="272" y="338" width="70" height="9" rx="4.5" fill="#e0e7ff"/>
+  <rect x="272" y="354" width="48" height="9" rx="4.5" fill="#e0e7ff"/>
+</svg>
