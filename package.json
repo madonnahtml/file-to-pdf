@@ -1,14 +1,16 @@
 {
   "name": "immagini-in-pdf",
   "productName": "Immagini in PDF",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Converti le tue immagini in un PDF, con editor di pagina, ritaglio e layout liberi.",
   "main": "src/main.js",
-  "author": "madonnahtml",
+  "author": {
+    "name": "madonnahtml"
+  },
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "dist:win": "electron-builder --win nsis portable --x64 --publish never"
+    "dist:win": "electron-builder --win nsis appx --x64 --publish never"
   },
   "dependencies": {
     "heic2any": "0.0.4",
@@ -23,6 +25,7 @@
   "build": {
     "appId": "com.madonnahtml.immaginiinpdf",
     "productName": "Immagini in PDF",
+    "copyright": "Copyright © 2026 madonnahtml",
     "directories": {
       "output": "dist",
       "buildResources": "build"
@@ -31,21 +34,45 @@
       "src/**/*",
       "package.json"
     ],
+    "asar": true,
+    "electronFuses": {
+      "runAsNode": false,
+      "enableCookieEncryption": true,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true
+    },
     "win": {
       "icon": "build/icon.png",
-      "artifactName": "Immagini-in-PDF-${version}-${arch}-${target}.${ext}"
+      "legalTrademarks": "Immagini in PDF",
+      "requestedExecutionLevel": "asInvoker"
     },
     "nsis": {
-      "oneClick": false,
+      "oneClick": true,
       "perMachine": false,
-      "allowToChangeInstallationDirectory": true,
+      "runAfterFinish": true,
       "createDesktopShortcut": "always",
       "createStartMenuShortcut": true,
       "shortcutName": "Immagini in PDF",
+      "deleteAppDataOnUninstall": false,
+      "include": "build/installer.nsh",
       "artifactName": "Immagini-in-PDF-Setup-${version}.${ext}"
     },
-    "portable": {
-      "artifactName": "Immagini-in-PDF-Portable-${version}.${ext}"
+    "appx": {
+      "customManifestPath": "appxmanifest.xml",
+      "identityName": "ImmaginiinPDF",
+      "applicationId": "ImmaginiInPDF",
+      "publisher": "CN=madonnahtml",
+      "publisherDisplayName": "madonnahtml",
+      "displayName": "Immagini in PDF",
+      "backgroundColor": "#5b5bf0",
+      "languages": [
+        "it-IT",
+        "en-US"
+      ],
+      "artifactName": "Immagini-in-PDF-Store-${version}.${ext}"
     }
-  }
+  },
+  "homepage": "https://github.com/madonnahtml/file-to-pdf"
 }

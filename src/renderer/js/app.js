@@ -923,6 +923,11 @@ function init() {
   $('selBox').addEventListener('pointerdown', onItemPointerDown);
   bindEvents();
   render();
+  if (window.desktop?.onOpenFiles) {
+    window.desktop.onOpenFiles((files) => {
+      addFiles(files.map((f) => new File([f.data], f.name)), null);
+    });
+  }
 }
 
 init();

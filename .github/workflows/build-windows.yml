@@ -21,10 +21,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build installer and portable exe
-        run: npx electron-builder --win nsis portable --x64 --publish never
+      # Code signing is automatic when a certificate is configured in the repo
+      # secrets WIN_CSC_LINK (base64 .pfx) and WIN_CSC_KEY_PASSWORD.
+      # Microsoft Store identity comes from repo variables (Partner Center →
+      # Product identity); without them a test package is built.
+      - name: Build installer and Microsoft Store package
+        shell: bash
         env:
+          CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
+          STORE_IDENTITY_NAME: ${{ vars.STORE_IDENTITY_NAME }}
+          STORE_PUBLISHER: ${{ vars.STORE_PUBLISHER }}
+          STORE_PUBLISHER_DISPLAY_NAME: ${{ vars.STORE_PUBLISHER_DISPLAY_NAME }}
+        run: |
+          ARGS=()
+          [ -n "$STORE_IDENTITY_NAME" ] && ARGS+=("-c.appx.identityName=$STORE_IDENTITY_NAME")
+          [ -n "$STORE_PUBLISHER" ] && ARGS+=("-c.appx.publisher=$STORE_PUBLISHER")
+          [ -n "$STORE_PUBLISHER_DISPLAY_NAME" ] && ARGS+=("-c.appx.publisherDisplayName=$STORE_PUBLISHER_DISPLAY_NAME")
+          npx electron-builder --win nsis appx --x64 --publish never "${ARGS[@]}"
 
       - name: Upload build
         uses: actions/upload-artifact@v4
@@ -32,6 +47,7 @@ jobs:
           name: Immagini-in-PDF-Windows
           path: |
             dist/*.exe
+            dist/*.appx
 
       - name: Publish GitHub release
         shell: bash
@@ -39,11 +55,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="v$(node -p "require('./package.json').version")"
+          FILES=(dist/*.exe dist/*.appx)
           if gh release view "$VERSION" > /dev/null 2>&1; then
-            gh release upload "$VERSION" dist/*.exe --clobber
+            gh release upload "$VERSION" "${FILES[@]}" --clobber
           else
-            gh release create "$VERSION" dist/*.exe \
+            gh release create "$VERSION" "${FILES[@]}" \
               --target "$GITHUB_SHA" \
               --title "Immagini in PDF $VERSION" \
-              --notes "Scarica **Immagini-in-PDF-Setup** e fai doppio clic per installare: l'icona viene aggiunta al desktop. La versione **Portable** si avvia senza installazione."
+              --notes-file .github/release-notes.md
           fi
