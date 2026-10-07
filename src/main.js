@@ -4,7 +4,7 @@ const fs = require('fs/promises');
 
 const IMAGE_EXT = new Set([
   'jpg', 'jpeg', 'jfif', 'png', 'gif', 'bmp', 'webp', 'avif',
-  'heic', 'heif', 'tif', 'tiff', 'svg', 'ico',
+  'heic', 'heif', 'tif', 'tiff', 'svg', 'ico', 'pdf',
 ]);
 
 let win;

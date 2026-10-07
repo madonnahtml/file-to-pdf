@@ -35,10 +35,11 @@
   !insertmacro ${MACRO} ".tif"
   !insertmacro ${MACRO} ".tiff"
   !insertmacro ${MACRO} ".svg"
+  !insertmacro ${MACRO} ".pdf"
 !macroend
 
 !macro customInstall
-  WriteRegStr HKCU "Software\Classes\${IIP_PROGID}" "" "Immagine (Immagini in PDF)"
+  WriteRegStr HKCU "Software\Classes\${IIP_PROGID}" "" "Immagine o PDF (Immagini in PDF)"
   WriteRegStr HKCU "Software\Classes\${IIP_PROGID}\DefaultIcon" "" "$INSTDIR\${APP_EXECUTABLE_FILENAME},0"
   WriteRegStr HKCU "Software\Classes\${IIP_PROGID}\shell\open" "FriendlyAppName" "Immagini in PDF"
   WriteRegStr HKCU "Software\Classes\${IIP_PROGID}\shell\open\command" "" '"$INSTDIR\${APP_EXECUTABLE_FILENAME}" "%1"'

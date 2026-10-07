@@ -23,7 +23,7 @@ La soluzione definitiva è il Microsoft Store: Microsoft verifica l'app, la firm
 - **Apri con → Immagini in PDF**. Il visualizzatore di immagini predefinito non viene cambiato.
 - **Invia a → Immagini in PDF**: il modo migliore per selezionare tante immagini e mandarle tutte insieme.
 
-Le immagini aperte da Esplora file vengono aggiunte in ordine di nome, una per pagina.
+Funziona anche con i file PDF. Le immagini aperte da Esplora file vengono aggiunte in ordine di nome, una per pagina.
 
 ## Pubblicare sul Microsoft Store (gratis)
 
@@ -49,7 +49,8 @@ Da quel momento ogni build verrà firmata automaticamente.
 
 ## Funzioni
 
-- **Formati:** JPG, PNG, HEIC/HEIF (foto iPhone), WEBP, GIF, BMP, TIFF (anche multipagina), SVG, AVIF.
+- **Formati:** JPG, PNG, HEIC/HEIF (foto iPhone), WEBP, GIF, BMP, TIFF (anche multipagina), SVG, AVIF e **PDF**.
+- **PDF:** ogni pagina diventa una pagina modificabile, come un'immagine (ritaglio, rotazione, più pagine sullo stesso foglio). Nel PDF finale testo e grafica restano vettoriali, quindi nitidi e leggeri. I PDF con moduli compilati o annotazioni vengono inseriti come immagine ad alta risoluzione, così nulla va perso. I PDF protetti da password non sono supportati.
 - **Aggiunta:** con il pulsante o trascinando i file nella finestra. Se li rilasci su una pagina, finiscono in quella pagina.
 - **Pagine:** riordino con drag & drop, duplicazione, eliminazione, pagine vuote, unione con la pagina precedente.
 - **Editor della pagina:** anteprima reale del foglio. Sposti le immagini trascinandole e le ridimensioni dagli angoli, con guide magnetiche (tieni premuto Alt per disattivarle).

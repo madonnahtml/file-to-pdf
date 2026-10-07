@@ -1,7 +1,7 @@
 {
   "name": "immagini-in-pdf",
   "productName": "Immagini in PDF",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Converti le tue immagini in un PDF, con editor di pagina, ritaglio e layout liberi.",
   "main": "src/main.js",
   "author": {
@@ -16,6 +16,7 @@
     "heic2any": "0.0.4",
     "pako": "^1.0.11",
     "pdf-lib": "1.17.1",
+    "pdfjs-dist": "^6.4.299",
     "utif": "3.1.0"
   },
   "devDependencies": {
@@ -32,7 +33,16 @@
     },
     "files": [
       "src/**/*",
-      "package.json"
+      "package.json",
+      "!node_modules/pdfjs-dist/{build,web,types,image_decoders}/**",
+      "!node_modules/pdfjs-dist/legacy/build/*.map",
+      "!node_modules/pdfjs-dist/legacy/build/pdf.mjs",
+      "!node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs",
+      "!node_modules/pdfjs-dist/legacy/build/pdf.sandbox*",
+      "!node_modules/pdfjs-dist/wasm/quickjs-eval*",
+      "!node_modules/pdf-lib/{es,src,ts3.4}/**",
+      "!node_modules/pdf-lib/dist/pdf-lib.{js,esm.js,esm.min.js}*",
+      "!node_modules/**/*.{map,md,d.ts,d.mts}"
     ],
     "asar": true,
     "electronFuses": {

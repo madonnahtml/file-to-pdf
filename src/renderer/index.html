@@ -96,10 +96,10 @@
         <div class="empty-card">
           <div class="empty-icon"><i data-icon="images"></i></div>
           <h1>Trasforma le tue immagini in un PDF</h1>
-          <p>Trascina qui le immagini oppure scegli i file dal computer.<br>Ogni immagine diventa una pagina, nell'ordine in cui la aggiungi.</p>
+          <p>Trascina qui immagini o PDF oppure scegli i file dal computer.<br>Ogni immagine diventa una pagina, nell'ordine in cui la aggiungi.</p>
           <button class="btn primary lg" id="btnAddEmpty"><i data-icon="plus"></i><span>Scegli immagini</span></button>
           <div class="formats">
-            <span>JPG</span><span>PNG</span><span>HEIC</span><span>WEBP</span><span>GIF</span><span>BMP</span><span>TIFF</span><span>SVG</span><span>AVIF</span>
+            <span>JPG</span><span>PNG</span><span>HEIC</span><span>WEBP</span><span>GIF</span><span>BMP</span><span>TIFF</span><span>SVG</span><span>AVIF</span><span>PDF</span>
           </div>
         </div>
       </div>
@@ -262,7 +262,7 @@
   <div class="toasts" id="toasts"></div>
 
   <input type="file" id="fileInput" multiple hidden
-         accept="image/*,.heic,.heif,.tif,.tiff,.svg,.bmp,.webp,.avif,.gif,.jpg,.jpeg,.png,.jfif,.ico">
+         accept="image/*,application/pdf,.pdf,.heic,.heif,.tif,.tiff,.svg,.bmp,.webp,.avif,.gif,.jpg,.jpeg,.png,.jfif,.ico">
 
   <script src="../../node_modules/pdf-lib/dist/pdf-lib.min.js"></script>
   <script src="../../node_modules/pako/dist/pako.min.js"></script>

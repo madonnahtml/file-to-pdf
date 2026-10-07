@@ -501,7 +501,7 @@ async function addFiles(fileList, target) {
   for (let i = 0; i < files.length; i++) {
     t.update(`Importazione ${i + 1} di ${files.length}: ${files[i].name}`);
     try {
-      const res = await decodeFile(files[i]);
+      const res = await decodeFile(files[i], (msg) => t.update(`Importazione ${i + 1} di ${files.length}: ${msg}`));
       res.forEach((s) => state.sources.set(s.id, s));
       sources.push(...res);
     } catch (err) {
